@@ -1,0 +1,32 @@
+# 代码所有者文件
+# 定义对代码库各部分负责的人员或团队
+
+# 全局所有者
+* @maintainers
+
+# 后端代码
+/backend/ @backend-team
+
+# 前端代码
+/frontend/ @frontend-team
+
+# 数据库脚本
+/database/ @backend-team
+
+# 文档
+README.md @docs-team
+QUICKSTART.md @docs-team
+CONTRIBUTING.md @docs-team
+.github/ @maintainers
+
+# 配置文件和脚本
+docker-compose.yml @devops-team
+*.sh @devops-team
+.gitignore @maintainers
+
+# 团队定义
+# @maintainers - 项目维护者
+# @backend-team - 后端开发团队
+# @frontend-team - 前端开发团队
+# @docs-team - 文档团队
+# @devops-team - DevOps团队

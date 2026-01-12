@@ -1,0 +1,52 @@
+{
+  "name": "alzheimer-prevention-backend",
+  "version": "1.0.0",
+  "description": "Backend for Alzheimer's prevention through daily conversation",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3",
+    "sequelize": "^6.32.1",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "winston": "^3.10.0",
+    "joi": "^17.9.2",
+    "axios": "^1.5.0",
+    "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/cors": "^2.8.13",
+    "@types/node": "^20.5.0",
+    "@types/pg": "^8.10.2",
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "typescript": "^5.2.2",
+    "ts-node-dev": "^2.0.0",
+    "jest": "^29.6.2",
+    "@types/jest": "^29.5.4",
+    "ts-jest": "^29.1.1",
+    "eslint": "^8.47.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0"
+  },
+  "keywords": [
+    "alzheimer",
+    "prevention",
+    "cognitive",
+    "assessment",
+    "healthcare"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
