@@ -11,8 +11,12 @@ const router = Router();
 const validateApiToken = (req: Request, res: Response, next: NextFunction) => {
   const apiToken = process.env.VOICE_API_TOKEN;
   
-  // 如果没有配置 API Token，则跳过验证
+  // 如果没有配置 API Token，记录警告但允许继续
+  // 在生产环境中应该强制要求配置
   if (!apiToken) {
+    if (process.env.NODE_ENV === 'production') {
+      logger.warn('VOICE_API_TOKEN not set in production environment!');
+    }
     return next();
   }
 
@@ -24,7 +28,16 @@ const validateApiToken = (req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  const token = authHeader.replace('Bearer ', '');
+  // Robust token extraction
+  const parts = authHeader.split(' ');
+  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+    return res.status(401).json({
+      success: false,
+      error: 'Invalid authorization header format. Expected: Bearer <token>',
+    });
+  }
+
+  const token = parts[1];
   if (token !== apiToken) {
     return res.status(401).json({
       success: false,

@@ -109,7 +109,7 @@ export class VoiceService {
         intent: request.intent,
         slots: request.slots || {},
         rawPayload: request.raw_payload,
-        success: true,
+        success: false, // Initialize as false, will update on success
       });
 
       // 2. 更新设备最后活跃时间
@@ -162,7 +162,8 @@ export class VoiceService {
 
       // 记录错误到审计日志
       if (audit) {
-        await audit.markAsFailed(error.message);
+        audit.success = false;
+        audit.errorMessage = error.message;
         audit.setProcessingTime(startTime);
         await audit.save();
       }

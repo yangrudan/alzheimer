@@ -1,6 +1,11 @@
 -- 语音/智能音箱集成数据库迁移脚本
 -- 创建 voice_devices 和 voice_audit 表
 
+-- 注意：此脚本依赖于 update_updated_at_column() 函数
+-- 该函数应该在主数据库初始化脚本 (database/init.sql) 中已经创建
+-- 如果运行此脚本时出现 "function update_updated_at_column() does not exist" 错误，
+-- 请先运行主数据库初始化脚本
+
 -- 语音设备表
 -- 存储注册的语音设备信息（小米音箱、小爱同学等）
 CREATE TABLE IF NOT EXISTS voice_devices (
