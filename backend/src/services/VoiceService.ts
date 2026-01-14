@@ -57,20 +57,23 @@ export class VoiceService {
 
       if (device) {
         // 更新现有设备
-        await device.update({
-          platform,
+        const updates: any = {
           ownerUserId: userId || device.ownerUserId,
           deviceName: deviceName || device.deviceName,
           metadata: metadata ? { ...device.metadata, ...metadata } : device.metadata,
           lastActiveAt: new Date(),
           isActive: true,
-        });
+        };
+        if (platform) {
+          updates.platform = platform;
+        }
+        await device.update(updates);
         logger.info(`Updated voice device: ${deviceId}`);
       } else {
         // 创建新设备
         device = await VoiceDevice.create({
           deviceId,
-          platform: platform as any,
+          platform: platform as 'xiaogpt' | 'xiaoai' | 'tmall_genie' | 'dueros' | 'other',
           ownerUserId: userId,
           deviceName,
           metadata: metadata || {},

@@ -51,7 +51,7 @@ const validateApiToken = (req: Request, res: Response, next: NextFunction) => {
  *   "raw_payload": { "原始数据": "..." }
  * }
  */
-router.post('/webhook', validateApiToken, asyncHandler(async (req, res) => {
+router.post('/webhook', validateApiToken, asyncHandler(async (req: Request, res: Response) => {
   const { device_id, platform, user_id, intent, slots, request_id, raw_payload } = req.body;
 
   // 验证必填字段
@@ -93,7 +93,7 @@ router.post('/webhook', validateApiToken, asyncHandler(async (req, res) => {
  *   "metadata": { "元数据": "..." }
  * }
  */
-router.post('/devices/register', validateApiToken, asyncHandler(async (req, res) => {
+router.post('/devices/register', validateApiToken, asyncHandler(async (req: Request, res: Response) => {
   const { device_id, platform, user_id, device_name, metadata } = req.body;
 
   // 验证必填字段
@@ -127,7 +127,7 @@ router.post('/devices/register', validateApiToken, asyncHandler(async (req, res)
  * @desc    获取设备的审计日志
  * @access  Private
  */
-router.get('/devices/:deviceId/audit', validateApiToken, asyncHandler(async (req, res) => {
+router.get('/devices/:deviceId/audit', validateApiToken, asyncHandler(async (req: Request, res: Response) => {
   const { deviceId } = req.params;
   const limit = parseInt(req.query.limit as string) || 50;
 
@@ -147,7 +147,7 @@ router.get('/devices/:deviceId/audit', validateApiToken, asyncHandler(async (req
  * @desc    获取用户的审计日志
  * @access  Private
  */
-router.get('/users/:userId/audit', validateApiToken, asyncHandler(async (req, res) => {
+router.get('/users/:userId/audit', validateApiToken, asyncHandler(async (req: Request, res: Response) => {
   const { userId } = req.params;
   const limit = parseInt(req.query.limit as string) || 50;
 
@@ -167,7 +167,7 @@ router.get('/users/:userId/audit', validateApiToken, asyncHandler(async (req, re
  * @desc    语音服务健康检查
  * @access  Public
  */
-router.get('/health', asyncHandler(async (req, res) => {
+router.get('/health', asyncHandler(async (_req: Request, res: Response) => {
   return res.json({
     success: true,
     service: 'Voice Integration Service',
