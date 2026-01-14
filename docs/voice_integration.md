@@ -282,6 +282,27 @@ webhook_token: "your_voice_api_token_here"
 - 集成更多语音平台 (Alexa, Google Home)
 - 实现用户偏好设置
 
+## 测试 (Testing)
+
+### 单元测试
+
+测试文件位于 `backend/tests/voice.test.ts`。
+
+**安装测试依赖:**
+```bash
+cd backend
+npm install --save-dev supertest @types/supertest
+```
+
+**运行测试:**
+```bash
+npm test
+```
+
+### 手动测试
+
+参见上面的"测试示例"部分，使用 curl 命令进行手动测试。
+
 ## 故障排查 (Troubleshooting)
 
 ### 1. Webhook 返回 401 Unauthorized

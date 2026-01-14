@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { VoiceService } from '../services/VoiceService';
 import { asyncHandler } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
@@ -9,7 +9,7 @@ const router = Router();
  * Middleware for optional token authentication
  * Checks VOICE_API_TOKEN environment variable if set
  */
-const authenticateVoiceToken = (req: Request, res: Response, next: Function) => {
+const authenticateVoiceToken = (req: Request, res: Response, next: NextFunction) => {
   const apiToken = process.env.VOICE_API_TOKEN;
 
   // If no token is configured, skip authentication
