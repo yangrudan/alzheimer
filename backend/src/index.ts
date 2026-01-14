@@ -13,6 +13,7 @@ import conversationRoutes from './routes/conversation.routes';
 import assessmentRoutes from './routes/assessment.routes';
 import userRoutes from './routes/user.routes';
 import analyticsRoutes from './routes/analytics.routes';
+import voiceRoutes from './routes/voice.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -59,6 +60,7 @@ app.use('/api/conversations', conversationRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/voice', voiceRoutes);
 
 // WebSocket for real-time conversation
 io.on('connection', (socket) => {
