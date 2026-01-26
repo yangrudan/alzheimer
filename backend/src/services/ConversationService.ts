@@ -511,7 +511,7 @@ export class ConversationService {
       // 验证用户是否存在
       const user = await User.findByPk(userId);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error('用户不存在');
       }
 
       // 计算对话持续时间
@@ -548,7 +548,7 @@ export class ConversationService {
       // 批量创建消息记录
       const messagePromises = conversationData.messages.map(async (msg) => {
         const sender = msg.sender === 'assistant' ? 'system' : msg.sender;
-        const messageType = msg.sender === 'assistant' ? 'text' : 'text';
+        const messageType = 'text';
 
         return await ConversationMessage.create({
           conversationId: conversation.id,
