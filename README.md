@@ -136,8 +136,10 @@ alzheimer/
 - `GET /api/conversations/:conversationId/messages` - 获取对话消息
 - `POST /api/conversations/upload` - **新增：上传智能音响对话记录并分析** 📱
   - 支持智能音响设备批量上传对话记录
+  - **支持多种格式**：标准格式和MoCA认知评估格式
   - 自动进行认知分析和评分
   - 详细文档：[智能音响对话上传API](docs/API_CONVERSATION_UPLOAD.md)
+  - MoCA格式指南：[MoCA格式上传指南](docs/MOCA_FORMAT_GUIDE.md)
 
 ### 评估相关
 - `POST /api/assessments` - 创建认知评估
