@@ -5,7 +5,7 @@
       "name": "基本对话示例",
       "description": "简单的日常对话，包含问候和简短交流",
       "data": {
-        "userId": "test-user-001",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
         "title": "早晨问候",
         "type": "daily",
         "messages": [
@@ -43,7 +43,7 @@
       "name": "详细对话示例",
       "description": "包含更多轮次的对话，测试认知分析功能",
       "data": {
-        "userId": "test-user-002",
+        "userId": "550e8400-e29b-41d4-a716-446655440002",
         "title": "下午聊天",
         "type": "daily",
         "messages": [
@@ -115,7 +115,7 @@
       "name": "记忆测试对话",
       "description": "包含记忆回忆元素的对话，测试记忆评分",
       "data": {
-        "userId": "test-user-003",
+        "userId": "550e8400-e29b-41d4-a716-446655440003",
         "title": "回忆往事",
         "type": "assessment",
         "messages": [
@@ -175,7 +175,7 @@
       "name": "最小示例",
       "description": "只包含必填字段的最简单示例",
       "data": {
-        "userId": "test-user-004",
+        "userId": "550e8400-e29b-41d4-a716-446655440004",
         "messages": [
           {
             "sender": "assistant",
@@ -192,7 +192,7 @@
       "name": "情绪波动对话",
       "description": "包含不同情绪状态的对话，测试情感分析",
       "data": {
-        "userId": "test-user-005",
+        "userId": "550e8400-e29b-41d4-a716-446655440005",
         "title": "情绪分享",
         "type": "therapeutic",
         "messages": [

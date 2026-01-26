@@ -113,7 +113,7 @@ class XiaomiSpeakerIntegration {
 }
 
 // 使用示例
-const integration = new XiaomiSpeakerIntegration('http://localhost:3001', 'user-123');
+const integration = new XiaomiSpeakerIntegration('http://localhost:3001', '550e8400-e29b-41d4-a716-446655440000');
 
 // 模拟对话
 integration.startConversation();
@@ -238,7 +238,7 @@ class TmallGenieIntegration:
 
 # 使用示例
 if __name__ == '__main__':
-    integration = TmallGenieIntegration('http://localhost:3001', 'user-123')
+    integration = TmallGenieIntegration('http://localhost:3001', '550e8400-e29b-41d4-a716-446655440000')
     
     # 模拟对话
     integration.start_conversation()
@@ -382,7 +382,7 @@ public class BaiduSpeakerIntegration {
     public static void main(String[] args) {
         try {
             BaiduSpeakerIntegration integration = 
-                new BaiduSpeakerIntegration("http://localhost:3001", "user-123");
+                new BaiduSpeakerIntegration("http://localhost:3001", "550e8400-e29b-41d4-a716-446655440000");
             
             integration.startConversation();
             integration.addMessage("assistant", "你好！今天感觉怎么样？", null);

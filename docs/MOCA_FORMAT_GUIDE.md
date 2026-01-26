@@ -1,5 +1,13 @@
 # MoCA格式对话上传示例
 
+## 重要说明
+
+⚠️ **userId必须是有效的UUID格式**
+
+系统使用UUID作为用户标识符。请确保提供有效的UUID格式，例如：`550e8400-e29b-41d4-a716-446655440000`
+
+如果您还没有用户UUID，需要先创建用户或从系统获取现有用户的UUID。
+
 ## 格式说明
 
 API现在支持两种格式的对话上传：
@@ -7,7 +15,7 @@ API现在支持两种格式的对话上传：
 ### 1. 标准格式（原有格式）
 ```json
 {
-  "userId": "user-123",
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
   "title": "对话标题",
   "type": "daily",
   "messages": [
@@ -28,7 +36,7 @@ API现在支持两种格式的对话上传：
 ### 2. MoCA认知评估格式（新增支持）
 ```json
 {
-  "userId": "user-123",
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
   "session_start_time": "2026-01-23 19:12:13",
   "session_end_time": "2026-01-23 19:15:31",
   "test_type": "MoCA阿兹海默症认知评估",
@@ -53,7 +61,7 @@ API现在支持两种格式的对话上传：
 curl -X POST http://localhost:3001/api/conversations/upload \
   -H "Content-Type: application/json" \
   -d '{
-    "userId": "user-123",
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
     "session_start_time": "2026-01-23 19:12:13",
     "session_end_time": "2026-01-23 19:15:31",
     "test_type": "MoCA阿兹海默症认知评估",
@@ -95,8 +103,9 @@ import json
 with open('moca_assessment.json', 'r', encoding='utf-8') as f:
     moca_data = json.load(f)
 
-# 添加userId（必填）
-moca_data['userId'] = 'user-123'
+# 添加userId（必填 - 必须是有效的UUID格式）
+# 请替换为您系统中实际的用户UUID
+moca_data['userId'] = '550e8400-e29b-41d4-a716-446655440000'
 
 # 上传到API
 response = requests.post(
@@ -120,8 +129,9 @@ const mocaData = JSON.parse(
   fs.readFileSync('moca_assessment.json', 'utf-8')
 );
 
-// 添加userId（必填）
-mocaData.userId = 'user-123';
+// 添加userId（必填 - 必须是有效的UUID格式）
+// 请替换为您系统中实际的用户UUID
+mocaData.userId = '550e8400-e29b-41d4-a716-446655440000';
 
 // 上传到API
 axios.post('http://localhost:3001/api/conversations/upload', mocaData)
@@ -145,7 +155,7 @@ axios.post('http://localhost:3001/api/conversations/upload', mocaData)
   "data": {
     "conversation": {
       "id": "conv-uuid-123",
-      "userId": "user-123",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
       "title": "MoCA阿兹海默症认知评估",
       "type": "assessment",
       "duration": 3,
@@ -220,6 +230,8 @@ axios.post('http://localhost:3001/api/conversations/upload', mocaData)
 
 ## 错误处理
 
+### 格式错误
+
 如果上传的数据格式不正确，API会返回相应的错误信息：
 
 ```json
@@ -229,4 +241,79 @@ axios.post('http://localhost:3001/api/conversations/upload', mocaData)
 }
 ```
 
-确保JSON文件符合以上两种格式之一即可成功上传。
+### UUID格式错误
+
+如果userId不是有效的UUID格式：
+
+```json
+{
+  "success": false,
+  "error": "用户ID格式不正确，必须是有效的UUID格式（例如：550e8400-e29b-41d4-a716-446655440000）"
+}
+```
+
+### 用户不存在
+
+如果UUID格式正确但用户不存在：
+
+```json
+{
+  "success": false,
+  "error": "用户不存在"
+}
+```
+
+## 如何获取用户UUID
+
+### 方法1：创建新用户
+
+如果您还没有用户，可以先创建一个：
+
+```bash
+curl -X POST http://localhost:3001/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "secure_password",
+    "firstName": "张",
+    "lastName": "三",
+    "dateOfBirth": "1960-01-01",
+    "gender": "male"
+  }'
+```
+
+响应会包含用户的UUID：
+
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "email": "user@example.com",
+      ...
+    }
+  }
+}
+```
+
+### 方法2：查询现有用户
+
+如果您已经有用户账号，可以登录获取UUID：
+
+```bash
+curl -X POST http://localhost:3001/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "your_password"
+  }'
+```
+
+或者查询用户信息获取UUID（需要认证token）。
+
+### 方法3：使用测试UUID
+
+在开发或测试环境中，您可以使用数据库中已存在的测试用户UUID。
+
+确保JSON文件符合以上两种格式之一，并且使用有效的用户UUID即可成功上传。

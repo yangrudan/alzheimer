@@ -240,6 +240,15 @@ router.post('/upload', asyncHandler(async (req, res) => {
     });
   }
 
+  // 验证UUID格式
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(userId)) {
+    return res.status(400).json({
+      success: false,
+      error: '用户ID格式不正确，必须是有效的UUID格式（例如：550e8400-e29b-41d4-a716-446655440000）',
+    });
+  }
+
   // 确定要使用的数据
   let conversationData;
   

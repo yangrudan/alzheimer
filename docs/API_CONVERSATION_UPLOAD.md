@@ -54,7 +54,7 @@ curl -X POST https://your-domain.com/api/conversations/upload \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_TOKEN" \
   -d '{
-    "userId": "user-123456",
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
     "title": "早晨对话",
     "type": "daily",
     "messages": [
@@ -108,7 +108,7 @@ const uploadConversation = async (conversationData) => {
 
 // 使用示例
 const conversationData = {
-  userId: 'user-123456',
+  userId: '550e8400-e29b-41d4-a716-446655440000',
   title: '早晨对话',
   type: 'daily',
   messages: [
@@ -154,7 +154,7 @@ def upload_conversation(conversation_data, api_token):
 
 # 使用示例
 conversation_data = {
-    'userId': 'user-123456',
+    'userId': '550e8400-e29b-41d4-a716-446655440000',
     'title': '早晨对话',
     'type': 'daily',
     'messages': [
@@ -191,7 +191,7 @@ print('上传结果:', result)
   "data": {
     "conversation": {
       "id": "conv-uuid-123",
-      "userId": "user-123456",
+      "userId": "550e8400-e29b-41d4-a716-446655440000",
       "title": "早晨对话",
       "type": "daily",
       "duration": 15,
