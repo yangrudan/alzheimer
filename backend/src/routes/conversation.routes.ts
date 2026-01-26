@@ -191,4 +191,82 @@ router.get('/user/:userId/stats', asyncHandler(async (req, res) => {
   });
 }));
 
+/**
+ * @route   POST /api/conversations/upload
+ * @desc    上传智能音响对话记录并进行分析
+ * @access  Public/Private
+ * @body    {
+ *   userId: string,
+ *   title?: string,
+ *   type?: 'daily' | 'assessment' | 'therapeutic',
+ *   messages: Array<{
+ *     sender: 'user' | 'assistant',
+ *     content: string,
+ *     timestamp?: string,
+ *     responseTime?: number
+ *   }>,
+ *   metadata?: {
+ *     deviceId?: string,
+ *     deviceType?: string,
+ *     sessionId?: string
+ *   }
+ * }
+ */
+router.post('/upload', asyncHandler(async (req, res) => {
+  const { userId, title, type, messages, metadata } = req.body;
+
+  // 验证必填字段
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      error: '用户ID是必填项',
+    });
+  }
+
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({
+      success: false,
+      error: '对话记录不能为空',
+    });
+  }
+
+  // 验证消息格式
+  const invalidMessages = messages.filter(msg => 
+    !msg.sender || !msg.content || 
+    !['user', 'assistant'].includes(msg.sender)
+  );
+
+  if (invalidMessages.length > 0) {
+    return res.status(400).json({
+      success: false,
+      error: '消息格式不正确，每条消息必须包含sender和content字段，sender必须为user或assistant',
+    });
+  }
+
+  try {
+    // 使用ConversationService处理上传的对话
+    const result = await ConversationService.uploadConversation(
+      userId,
+      {
+        title: title || '智能音响对话',
+        type: type || 'daily',
+        messages,
+        metadata,
+      }
+    );
+
+    res.status(201).json({
+      success: true,
+      message: '对话记录上传成功并已完成分析',
+      data: result,
+    });
+  } catch (error: any) {
+    logger.error('Error uploading conversation:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || '上传对话记录时发生错误',
+    });
+  }
+}));
+
 export default router;

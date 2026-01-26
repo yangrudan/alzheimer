@@ -23,6 +23,7 @@ export class ConversationService {
         userId,
         title,
         type,
+        duration: 0, // 初始为0
         moodScore: 5, // 默认中等情绪
         engagementScore: 5, // 默认中等参与度
       });
@@ -487,5 +488,187 @@ export class ConversationService {
       logger.error('Error getting user conversation stats:', error);
       throw error;
     }
+  }
+
+  /**
+   * 上传并处理智能音响对话记录
+   */
+  static async uploadConversation(
+    userId: string,
+    conversationData: {
+      title: string;
+      type: 'daily' | 'assessment' | 'therapeutic';
+      messages: Array<{
+        sender: 'user' | 'assistant';
+        content: string;
+        timestamp?: string;
+        responseTime?: number;
+      }>;
+      metadata?: Record<string, any>;
+    }
+  ): Promise<any> {
+    try {
+      // 验证用户是否存在
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // 计算对话持续时间
+      let duration = 0;
+      if (conversationData.messages.length > 0) {
+        const firstTimestamp = conversationData.messages[0].timestamp;
+        const lastTimestamp = conversationData.messages[conversationData.messages.length - 1].timestamp;
+        
+        if (firstTimestamp && lastTimestamp) {
+          const start = new Date(firstTimestamp);
+          const end = new Date(lastTimestamp);
+          duration = Math.floor((end.getTime() - start.getTime()) / 60000); // 转换为分钟
+        }
+      }
+
+      // 计算初始情绪分数和参与度分数
+      const userMessages = conversationData.messages.filter(msg => msg.sender === 'user');
+      const moodScore = this.calculateMoodScoreFromMessages(userMessages);
+      const engagementScore = this.calculateEngagementScore(userMessages);
+
+      // 创建对话记录
+      const conversation = await Conversation.create({
+        userId,
+        title: conversationData.title,
+        type: conversationData.type,
+        duration: duration || 0,
+        moodScore,
+        engagementScore,
+        notes: conversationData.metadata ? JSON.stringify(conversationData.metadata) : undefined,
+      });
+
+      logger.info(`Created conversation from upload: ${conversation.id}`);
+
+      // 批量创建消息记录
+      const messagePromises = conversationData.messages.map(async (msg) => {
+        const sender = msg.sender === 'assistant' ? 'system' : msg.sender;
+        const messageType = msg.sender === 'assistant' ? 'text' : 'text';
+
+        return await ConversationMessage.create({
+          conversationId: conversation.id,
+          sender,
+          content: msg.content,
+          messageType,
+          cognitiveMetrics: msg.responseTime ? { responseTime: msg.responseTime } : undefined,
+          metadata: msg.timestamp ? { originalTimestamp: msg.timestamp } : undefined,
+          createdAt: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+        });
+      });
+
+      await Promise.all(messagePromises);
+      logger.info(`Created ${conversationData.messages.length} messages for conversation ${conversation.id}`);
+
+      // 进行认知分析
+      const analysis = await CognitiveAssessmentService.analyzeConversation(conversation.id);
+      logger.info(`Completed cognitive analysis for conversation ${conversation.id}`);
+
+      // 返回完整结果
+      return {
+        conversation: {
+          id: conversation.id,
+          userId: conversation.userId,
+          title: conversation.title,
+          type: conversation.type,
+          duration: conversation.duration,
+          moodScore: conversation.moodScore,
+          engagementScore: conversation.engagementScore,
+          cognitiveScore: conversation.cognitiveScore,
+          createdAt: conversation.createdAt,
+        },
+        analysis,
+        messageCount: conversationData.messages.length,
+        metadata: conversationData.metadata,
+      };
+    } catch (error) {
+      logger.error('Error uploading conversation:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 从消息中计算情绪分数
+   */
+  private static calculateMoodScoreFromMessages(
+    messages: Array<{ content: string }>
+  ): number {
+    if (messages.length === 0) return 5;
+
+    const positiveWords = ['好', '开心', '高兴', '喜欢', '爱', '幸福', '快乐', '满意', '不错'];
+    const negativeWords = ['不好', '难过', '伤心', '讨厌', '恨', '痛苦', '生气', '失望', '累'];
+
+    let totalScore = 0;
+    messages.forEach(msg => {
+      let score = 5; // 默认中性
+      let positiveCount = 0;
+      let negativeCount = 0;
+
+      positiveWords.forEach(word => {
+        if (msg.content.includes(word)) positiveCount++;
+      });
+
+      negativeWords.forEach(word => {
+        if (msg.content.includes(word)) negativeCount++;
+      });
+
+      // 根据正负面词汇调整分数
+      score += positiveCount * 0.5;
+      score -= negativeCount * 0.5;
+
+      totalScore += Math.min(Math.max(score, 1), 10);
+    });
+
+    return Math.round(totalScore / messages.length);
+  }
+
+  /**
+   * 计算参与度分数
+   */
+  private static calculateEngagementScore(
+    messages: Array<{ content: string; responseTime?: number }>
+  ): number {
+    if (messages.length === 0) return 5;
+
+    let engagementScore = 5;
+
+    // 基于消息数量
+    if (messages.length >= 10) {
+      engagementScore += 2;
+    } else if (messages.length >= 5) {
+      engagementScore += 1;
+    }
+
+    // 基于平均消息长度
+    const avgLength = messages.reduce((sum, msg) => sum + msg.content.length, 0) / messages.length;
+    if (avgLength >= 50) {
+      engagementScore += 2;
+    } else if (avgLength >= 20) {
+      engagementScore += 1;
+    } else {
+      engagementScore -= 1;
+    }
+
+    // 基于响应时间（如果提供）
+    const messagesWithResponseTime = messages.filter(msg => msg.responseTime);
+    if (messagesWithResponseTime.length > 0) {
+      const avgResponseTime = messagesWithResponseTime.reduce(
+        (sum, msg) => sum + (msg.responseTime || 0), 
+        0
+      ) / messagesWithResponseTime.length;
+
+      // 响应时间在3-10秒之间最好
+      if (avgResponseTime >= 3 && avgResponseTime <= 10) {
+        engagementScore += 1;
+      } else if (avgResponseTime > 20) {
+        engagementScore -= 1;
+      }
+    }
+
+    return Math.min(Math.max(Math.round(engagementScore), 1), 10);
   }
 }
