@@ -3,6 +3,7 @@ import { ConversationService } from '../services/ConversationService';
 import { CognitiveAssessmentService } from '../services/CognitiveAssessmentService';
 import { asyncHandler } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
+import { detectAndTransformConversationData } from '../utils/conversationTransformers';
 
 const router = Router();
 
@@ -189,6 +190,129 @@ router.get('/user/:userId/stats', asyncHandler(async (req, res) => {
     success: true,
     data: stats,
   });
+}));
+
+/**
+ * @route   POST /api/conversations/upload
+ * @desc    上传智能音响对话记录并进行分析（支持多种格式）
+ * @access  Public/Private
+ * @body    标准格式：{
+ *   userId: string,
+ *   title?: string,
+ *   type?: 'daily' | 'assessment' | 'therapeutic',
+ *   messages: Array<{
+ *     sender: 'user' | 'assistant',
+ *     content: string,
+ *     timestamp?: string,
+ *     responseTime?: number
+ *   }>,
+ *   metadata?: {
+ *     deviceId?: string,
+ *     deviceType?: string,
+ *     sessionId?: string
+ *   }
+ * }
+ * @body    MoCA格式：{
+ *   userId: string,
+ *   session_start_time: string,
+ *   session_end_time: string,
+ *   test_type: string,
+ *   conversation_history: Array<{
+ *     timestamp: string,
+ *     user_query: string,
+ *     bot_response: string
+ *   }>
+ * }
+ */
+router.post('/upload', asyncHandler(async (req, res) => {
+  const bodyData = req.body;
+  
+  // 检测并转换数据格式
+  const { transformed, format, needsUserId } = detectAndTransformConversationData(bodyData);
+  
+  // 获取userId
+  let userId = bodyData.userId;
+  
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      error: '用户ID是必填项',
+    });
+  }
+
+  // 验证UUID格式
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(userId)) {
+    return res.status(400).json({
+      success: false,
+      error: '用户ID格式不正确，必须是有效的UUID格式（例如：550e8400-e29b-41d4-a716-446655440000）',
+    });
+  }
+
+  // 确定要使用的数据
+  let conversationData;
+  
+  if (format === 'moca' && transformed) {
+    // MoCA格式，使用转换后的数据
+    conversationData = transformed;
+    logger.info(`Received MoCA format data, transformed to standard format`);
+  } else if (format === 'standard') {
+    // 标准格式，直接使用
+    const { title, type, messages, metadata } = bodyData;
+    
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: '对话记录不能为空',
+      });
+    }
+
+    // 验证消息格式
+    const invalidMessages = messages.filter((msg: any) => 
+      !msg.sender || !msg.content || 
+      !['user', 'assistant'].includes(msg.sender)
+    );
+
+    if (invalidMessages.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: '消息格式不正确，每条消息必须包含sender和content字段，sender必须为user或assistant',
+      });
+    }
+    
+    conversationData = {
+      title: title || '智能音响对话',
+      type: type || 'daily',
+      messages,
+      metadata,
+    };
+  } else {
+    return res.status(400).json({
+      success: false,
+      error: '不支持的数据格式。支持的格式：1) 标准格式（包含messages数组）2) MoCA格式（包含conversation_history数组）',
+    });
+  }
+
+  try {
+    // 使用ConversationService处理上传的对话
+    const result = await ConversationService.uploadConversation(
+      userId,
+      conversationData
+    );
+
+    res.status(201).json({
+      success: true,
+      message: '对话记录上传成功并已完成分析',
+      data: result,
+      format: format, // 返回识别到的格式
+    });
+  } catch (error: any) {
+    logger.error('Error uploading conversation:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || '上传对话记录时发生错误',
+    });
+  }
 }));
 
 export default router;

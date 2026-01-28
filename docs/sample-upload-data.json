@@ -1,0 +1,252 @@
+{
+  "description": "智能音响对话上传API测试数据",
+  "samples": [
+    {
+      "name": "基本对话示例",
+      "description": "简单的日常对话，包含问候和简短交流",
+      "data": {
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "title": "早晨问候",
+        "type": "daily",
+        "messages": [
+          {
+            "sender": "assistant",
+            "content": "早上好！今天感觉怎么样？",
+            "timestamp": "2024-01-15T08:00:00Z"
+          },
+          {
+            "sender": "user",
+            "content": "早上好，我感觉很好。昨晚睡得不错。",
+            "timestamp": "2024-01-15T08:00:05Z",
+            "responseTime": 5
+          },
+          {
+            "sender": "assistant",
+            "content": "太好了！有什么早餐计划吗？",
+            "timestamp": "2024-01-15T08:00:10Z"
+          },
+          {
+            "sender": "user",
+            "content": "我想吃点燕麦粥和水果。",
+            "timestamp": "2024-01-15T08:00:15Z",
+            "responseTime": 5
+          }
+        ],
+        "metadata": {
+          "deviceId": "xiaomi-speaker-001",
+          "deviceType": "小米小爱音箱",
+          "sessionId": "session-20240115-001"
+        }
+      }
+    },
+    {
+      "name": "详细对话示例",
+      "description": "包含更多轮次的对话，测试认知分析功能",
+      "data": {
+        "userId": "550e8400-e29b-41d4-a716-446655440002",
+        "title": "下午聊天",
+        "type": "daily",
+        "messages": [
+          {
+            "sender": "assistant",
+            "content": "下午好！今天做了什么有趣的事吗？",
+            "timestamp": "2024-01-15T14:00:00Z"
+          },
+          {
+            "sender": "user",
+            "content": "下午好！我上午去了公园散步，看到很多人在锻炼。天气真不错。",
+            "timestamp": "2024-01-15T14:00:08Z",
+            "responseTime": 8
+          },
+          {
+            "sender": "assistant",
+            "content": "公园散步是个很好的习惯。你经常去那个公园吗？",
+            "timestamp": "2024-01-15T14:00:15Z"
+          },
+          {
+            "sender": "user",
+            "content": "是的，我每周去三次左右。那里有个小湖，我喜欢在湖边坐一会儿。",
+            "timestamp": "2024-01-15T14:00:23Z",
+            "responseTime": 8
+          },
+          {
+            "sender": "assistant",
+            "content": "听起来很放松。你还记得上次去公园是什么时候吗？",
+            "timestamp": "2024-01-15T14:00:30Z"
+          },
+          {
+            "sender": "user",
+            "content": "让我想想...应该是前天，周三的上午。我还遇到了老朋友张大妈。",
+            "timestamp": "2024-01-15T14:00:38Z",
+            "responseTime": 8
+          },
+          {
+            "sender": "assistant",
+            "content": "太好了！和朋友聊天一定很开心。你们聊了什么？",
+            "timestamp": "2024-01-15T14:00:45Z"
+          },
+          {
+            "sender": "user",
+            "content": "我们聊了她孙子的事，还有最近的天气。她说下周要去旅游。",
+            "timestamp": "2024-01-15T14:00:55Z",
+            "responseTime": 10
+          },
+          {
+            "sender": "assistant",
+            "content": "很棒！保持社交活动对健康很有帮助。",
+            "timestamp": "2024-01-15T14:01:00Z"
+          },
+          {
+            "sender": "user",
+            "content": "是啊，我也这么觉得。和朋友聊天总是让我心情愉快。",
+            "timestamp": "2024-01-15T14:01:06Z",
+            "responseTime": 6
+          }
+        ],
+        "metadata": {
+          "deviceId": "tmall-genie-002",
+          "deviceType": "天猫精灵",
+          "sessionId": "session-20240115-002",
+          "location": "北京市朝阳区"
+        }
+      }
+    },
+    {
+      "name": "记忆测试对话",
+      "description": "包含记忆回忆元素的对话，测试记忆评分",
+      "data": {
+        "userId": "550e8400-e29b-41d4-a716-446655440003",
+        "title": "回忆往事",
+        "type": "assessment",
+        "messages": [
+          {
+            "sender": "assistant",
+            "content": "你还记得小时候最喜欢做的事情是什么吗？",
+            "timestamp": "2024-01-15T16:00:00Z"
+          },
+          {
+            "sender": "user",
+            "content": "我记得小时候最喜欢和小伙伴们一起在院子里玩耍，我们经常玩跳房子。",
+            "timestamp": "2024-01-15T16:00:12Z",
+            "responseTime": 12
+          },
+          {
+            "sender": "assistant",
+            "content": "那一定很有趣！你能描述一下那时候的院子吗？",
+            "timestamp": "2024-01-15T16:00:20Z"
+          },
+          {
+            "sender": "user",
+            "content": "院子不大，但是有一棵大槐树。夏天的时候我们就在树下乘凉。院子里还有个小菜园。",
+            "timestamp": "2024-01-15T16:00:35Z",
+            "responseTime": 15
+          },
+          {
+            "sender": "assistant",
+            "content": "听起来很美好。你还记得当时一起玩的小伙伴的名字吗？",
+            "timestamp": "2024-01-15T16:00:42Z"
+          },
+          {
+            "sender": "user",
+            "content": "记得，有小明、小红和小刚。我们四个人总是一起玩。",
+            "timestamp": "2024-01-15T16:00:52Z",
+            "responseTime": 10
+          },
+          {
+            "sender": "assistant",
+            "content": "你的记忆力很好！那你还记得昨天早上吃了什么吗？",
+            "timestamp": "2024-01-15T16:01:00Z"
+          },
+          {
+            "sender": "user",
+            "content": "昨天早上我吃了豆浆和油条，还有一个煮鸡蛋。",
+            "timestamp": "2024-01-15T16:01:08Z",
+            "responseTime": 8
+          }
+        ],
+        "metadata": {
+          "deviceId": "baidu-speaker-003",
+          "deviceType": "小度音箱",
+          "sessionId": "session-20240115-003"
+        }
+      }
+    },
+    {
+      "name": "最小示例",
+      "description": "只包含必填字段的最简单示例",
+      "data": {
+        "userId": "550e8400-e29b-41d4-a716-446655440004",
+        "messages": [
+          {
+            "sender": "assistant",
+            "content": "你好！"
+          },
+          {
+            "sender": "user",
+            "content": "你好，很高兴见到你。"
+          }
+        ]
+      }
+    },
+    {
+      "name": "情绪波动对话",
+      "description": "包含不同情绪状态的对话，测试情感分析",
+      "data": {
+        "userId": "550e8400-e29b-41d4-a716-446655440005",
+        "title": "情绪分享",
+        "type": "therapeutic",
+        "messages": [
+          {
+            "sender": "assistant",
+            "content": "今天心情怎么样？",
+            "timestamp": "2024-01-15T18:00:00Z"
+          },
+          {
+            "sender": "user",
+            "content": "今天开始挺好的，早上阳光明媚，我很开心。",
+            "timestamp": "2024-01-15T18:00:06Z",
+            "responseTime": 6
+          },
+          {
+            "sender": "assistant",
+            "content": "太好了！后来呢？",
+            "timestamp": "2024-01-15T18:00:10Z"
+          },
+          {
+            "sender": "user",
+            "content": "但是下午下雨了，我感到有点失望，因为本来计划去散步的。",
+            "timestamp": "2024-01-15T18:00:18Z",
+            "responseTime": 8
+          },
+          {
+            "sender": "assistant",
+            "content": "下雨确实会影响计划。你做了什么来调整心情呢？",
+            "timestamp": "2024-01-15T18:00:25Z"
+          },
+          {
+            "sender": "user",
+            "content": "我在家里听了一会儿音乐，看了本书，感觉好多了。",
+            "timestamp": "2024-01-15T18:00:34Z",
+            "responseTime": 9
+          },
+          {
+            "sender": "assistant",
+            "content": "很好的应对方式！现在感觉怎么样？",
+            "timestamp": "2024-01-15T18:00:40Z"
+          },
+          {
+            "sender": "user",
+            "content": "现在心情平静多了，也挺满足的。",
+            "timestamp": "2024-01-15T18:00:46Z",
+            "responseTime": 6
+          }
+        ],
+        "metadata": {
+          "deviceId": "huawei-speaker-005",
+          "deviceType": "华为AI音箱",
+          "sessionId": "session-20240115-005"
+        }
+      }
+    }
+  ]
+}
