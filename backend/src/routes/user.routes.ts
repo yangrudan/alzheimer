@@ -48,7 +48,7 @@ router.post('/register', asyncHandler(async (req, res) => {
     const userResponse = existingUser.toJSON();
     delete userResponse.password;
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       message: '用户已存在，返回现有用户信息',
       data: {
