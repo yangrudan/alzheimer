@@ -491,6 +491,45 @@ export class ConversationService {
   }
 
   /**
+   * 获取用户的所有对话记录
+   */
+  static async getUserConversations(
+    userId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<{
+    conversations: Conversation[];
+    pagination: {
+      limit: number;
+      offset: number;
+      total: number;
+    };
+  }> {
+    try {
+      const { count, rows } = await Conversation.findAndCountAll({
+        where: { userId },
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+      });
+
+      logger.info(`Retrieved ${rows.length} conversations for user ${userId}`);
+
+      return {
+        conversations: rows,
+        pagination: {
+          limit,
+          offset,
+          total: count,
+        },
+      };
+    } catch (error) {
+      logger.error('Error getting user conversations:', error);
+      throw error;
+    }
+  }
+
+  /**
    * 上传并处理智能音响对话记录
    */
   static async uploadConversation(
