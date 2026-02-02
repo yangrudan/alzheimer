@@ -68,6 +68,7 @@ const UploadHistory = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
+  // TODO: Replace with actual user ID from auth context
   // Mock user ID - in a real app, this would come from auth context
   const userId = '550e8400-e29b-41d4-a716-446655440000'
 
@@ -240,6 +241,7 @@ const UploadHistory = () => {
 
   useEffect(() => {
     fetchConversations()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getTypeLabel = (type: string) => {
@@ -371,7 +373,7 @@ const UploadHistory = () => {
                 <div>
                   <p className="text-sm text-gray-600">平均认知分数</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
-                    {Math.round(conversations.reduce((sum, c) => sum + c.cognitiveScore, 0) / conversations.length)}
+                    {conversations.length > 0 ? Math.round(conversations.reduce((sum, c) => sum + c.cognitiveScore, 0) / conversations.length) : 0}
                   </p>
                 </div>
                 <Brain className="w-10 h-10 text-primary-600" />
@@ -383,7 +385,7 @@ const UploadHistory = () => {
                 <div>
                   <p className="text-sm text-gray-600">平均参与度</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
-                    {(conversations.reduce((sum, c) => sum + c.engagementScore, 0) / conversations.length).toFixed(1)}
+                    {conversations.length > 0 ? (conversations.reduce((sum, c) => sum + c.engagementScore, 0) / conversations.length).toFixed(1) : '0.0'}
                   </p>
                 </div>
                 <TrendingUp className="w-10 h-10 text-primary-600" />
