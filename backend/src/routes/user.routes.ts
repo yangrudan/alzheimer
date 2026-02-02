@@ -38,9 +38,23 @@ router.post('/register', asyncHandler(async (req, res) => {
   // 检查邮箱是否已存在
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
-    return res.status(400).json({
-      success: false,
-      error: '该邮箱已被注册',
+    // 用户已存在，返回现有用户信息（便于客户端继续操作）
+    const token = jwt.sign(
+      { userId: existingUser.id, email: existingUser.email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
+
+    const userResponse = existingUser.toJSON();
+    delete userResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      message: '用户已存在，返回现有用户信息',
+      data: {
+        user: userResponse,
+        token,
+      },
     });
   }
 
