@@ -107,13 +107,13 @@ jobs:
         npm audit --audit-level=moderate || true
 
     - name: Run Snyk to check for vulnerabilities
+      if: ${{ secrets.SNYK_TOKEN != '' }}
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --severity-threshold=high
+        args: --severity-threshold=high backend/
         command: monitor
-        file: backend/package.json
 
   docker-build:
     runs-on: ubuntu-latest
