@@ -67,28 +67,41 @@ const UploadHistory = () => {
   const [conversations, setConversations] = useState<ConversationData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [inputUserId, setInputUserId] = useState('')
   
   // TODO: Replace with actual user ID from auth context
-  // Mock user ID - in a real app, this would come from auth context
-  const userId = '550e8400-e29b-41d4-a716-446655440000'
+  // Default user ID - can be overridden by input
+  const [userId, setUserId] = useState('550e8400-e29b-41d4-a716-446655440000')
 
-  const fetchConversations = async () => {
+  const fetchConversations = async (userIdToFetch: string = userId) => {
     setLoading(true)
     setError(null)
     try {
       // Try to fetch from the API
-      const response = await axios.get(`/api/conversations/user/${userId}`)
+      const response = await axios.get(`/api/conversations/user/${userIdToFetch}`)
       
       if (response.data.success) {
         setConversations(response.data.data.conversations || [])
+        setError(null)
       } else {
         throw new Error('Failed to fetch conversations')
       }
     } catch (err: any) {
       console.error('Error fetching conversations:', err)
-      
-      // Use mock data for demonstration
-      setConversations([
+      setError('无法获取对话记录，请检查用户ID是否正确')
+      setConversations([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleUserIdSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (inputUserId.trim()) {
+      setUserId(inputUserId.trim())
+      fetchConversations(inputUserId.trim())
+    }
+  }
         {
           id: 'conv-001',
           userId: userId,
@@ -242,7 +255,7 @@ const UploadHistory = () => {
   useEffect(() => {
     fetchConversations()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [userId])
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
@@ -309,7 +322,7 @@ const UploadHistory = () => {
             </p>
           </div>
           <button
-            onClick={fetchConversations}
+            onClick={() => fetchConversations()}
             disabled={loading}
             className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
           >
@@ -317,6 +330,34 @@ const UploadHistory = () => {
             刷新
           </button>
         </div>
+      </div>
+
+      {/* User ID Input */}
+      <div className="mb-6">
+        <form onSubmit={handleUserIdSubmit} className="flex items-end gap-4">
+          <div className="flex-1 max-w-md">
+            <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
+              用户ID（从上传脚本获取）
+            </label>
+            <input
+              type="text"
+              id="userId"
+              value={inputUserId}
+              onChange={(e) => setInputUserId(e.target.value)}
+              placeholder="例如: f660d9e2-f62d-4a04-b1e0-ad3109b4ce56"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              当前查询用户ID: {userId.substring(0, 8)}...
+            </p>
+          </div>
+          <button
+            type="submit"
+            className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            查询
+          </button>
+        </form>
       </div>
 
       {/* Error or Info Message */}
