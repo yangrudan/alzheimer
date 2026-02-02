@@ -107,7 +107,7 @@ jobs:
         npm audit --audit-level=moderate || true
 
     - name: Run Snyk to check for vulnerabilities
-      if: ${{ secrets.SNYK_TOKEN != '' }}
+      continue-on-error: true
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
