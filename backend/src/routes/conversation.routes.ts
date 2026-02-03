@@ -43,18 +43,15 @@ router.get('/user/:userId', asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const { limit = 20, offset = 0 } = req.query;
 
-  // 这里应该从数据库查询，暂时返回模拟数据
-  // 实际实现时会从数据库查询
+  const result = await ConversationService.getUserConversations(
+    userId,
+    parseInt(limit as string),
+    parseInt(offset as string)
+  );
+
   res.json({
     success: true,
-    data: {
-      conversations: [],
-      pagination: {
-        limit: parseInt(limit as string),
-        offset: parseInt(offset as string),
-        total: 0,
-      },
-    },
+    data: result,
   });
 }));
 

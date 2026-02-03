@@ -8,6 +8,7 @@ import Analytics from './pages/Analytics'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import UploadHistory from './pages/UploadHistory'
 
 function App() {
   // 这里应该检查用户是否已登录
@@ -65,6 +66,16 @@ function App() {
           isAuthenticated ? (
             <Layout>
               <Profile />
+            </Layout>
+          ) : (
+            <Navigate to="/login" />
+          )
+        } />
+
+        <Route path="/upload-history" element={
+          isAuthenticated ? (
+            <Layout>
+              <UploadHistory />
             </Layout>
           ) : (
             <Navigate to="/login" />

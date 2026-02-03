@@ -6,7 +6,8 @@ import {
   Brain,
   BarChart3,
   User,
-  LogOut
+  LogOut,
+  Upload
 } from 'lucide-react'
 
 interface LayoutProps {
@@ -21,6 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: '对话', href: '/conversation', icon: MessageSquare },
     { name: '评估', href: '/assessment', icon: Brain },
     { name: '分析', href: '/analytics', icon: BarChart3 },
+    { name: '上传记录', href: '/upload-history', icon: Upload },
     { name: '个人资料', href: '/profile', icon: User },
   ]
 
