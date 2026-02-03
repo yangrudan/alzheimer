@@ -8,6 +8,23 @@ import { logger } from '../utils/logger';
 const router = Router();
 
 /**
+ * @route   GET /api/users
+ * @desc    获取所有用户列表
+ * @access  Public
+ */
+router.get('/', asyncHandler(async (req, res) => {
+  const users = await User.findAll({
+    attributes: ['id', 'firstName', 'lastName', 'email'],
+    order: [['createdAt', 'DESC']],
+  });
+
+  res.json({
+    success: true,
+    data: users,
+  });
+}));
+
+/**
  * @route   POST /api/users/register
  * @desc    注册新用户
  * @access  Public

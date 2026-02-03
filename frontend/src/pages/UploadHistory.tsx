@@ -63,15 +63,36 @@ interface ConversationData {
   }
 }
 
+interface UserData {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+}
+
 const UploadHistory = () => {
   const [conversations, setConversations] = useState<ConversationData[]>([])
+  const [users, setUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [inputUserId, setInputUserId] = useState('')
+  const [selectedUserId, setSelectedUserId] = useState('')
   
   // TODO: Replace with actual user ID from auth context
   // Default user ID - can be overridden by input
   const [userId, setUserId] = useState('550e8400-e29b-41d4-a716-446655440000')
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/api/users')
+      if (response.data.success) {
+        setUsers(response.data.data || [])
+      }
+    } catch (err: any) {
+      console.error('Error fetching users:', err)
+      toast.error('无法获取用户列表')
+    }
+  }
 
   const fetchConversations = async (userIdToFetch: string = userId) => {
     setLoading(true)
@@ -99,11 +120,23 @@ const UploadHistory = () => {
     e.preventDefault()
     if (inputUserId.trim()) {
       setUserId(inputUserId.trim())
+      setSelectedUserId('') // Clear dropdown when manual input is used
       fetchConversations(inputUserId.trim())
     }
   }
 
+  const handleUserSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value
+    setSelectedUserId(selectedId)
+    if (selectedId) {
+      setUserId(selectedId)
+      setInputUserId(selectedId) // Sync the input field
+      fetchConversations(selectedId)
+    }
+  }
+
   useEffect(() => {
+    fetchUsers()
     fetchConversations()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
@@ -183,32 +216,66 @@ const UploadHistory = () => {
         </div>
       </div>
 
-      {/* User ID Input */}
+      {/* User Selection */}
       <div className="mb-6">
-        <form onSubmit={handleUserIdSubmit} className="flex items-end gap-4">
-          <div className="flex-1 max-w-md">
-            <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
-              用户ID（从上传脚本获取）
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Users className="w-5 h-5 mr-2 text-primary-600" />
+            选择用户
+          </h2>
+          
+          {/* Dropdown Selection */}
+          <div className="mb-4">
+            <label htmlFor="userSelect" className="block text-sm font-medium text-gray-700 mb-2">
+              从列表中选择用户
             </label>
-            <input
-              type="text"
-              id="userId"
-              value={inputUserId}
-              onChange={(e) => setInputUserId(e.target.value)}
-              placeholder="例如: f660d9e2-f62d-4a04-b1e0-ad3109b4ce56"
+            <select
+              id="userSelect"
+              value={selectedUserId}
+              onChange={handleUserSelect}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              当前查询用户ID: {userId.substring(0, 8)}...
+            >
+              <option value="">-- 请选择用户 --</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName} ({user.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Manual Input */}
+          <div className="border-t border-gray-200 pt-4">
+            <form onSubmit={handleUserIdSubmit} className="flex items-end gap-4">
+              <div className="flex-1">
+                <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
+                  或直接粘贴用户ID
+                </label>
+                <input
+                  type="text"
+                  id="userId"
+                  value={inputUserId}
+                  onChange={(e) => setInputUserId(e.target.value)}
+                  placeholder="例如: f660d9e2-f62d-4a04-b1e0-ad3109b4ce56"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                查询
+              </button>
+            </form>
+          </div>
+
+          {/* Current User Info */}
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <p className="text-xs text-gray-600">
+              当前查询用户ID: <span className="font-mono text-gray-900">{userId}</span>
             </p>
           </div>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            查询
-          </button>
-        </form>
+        </div>
       </div>
 
       {/* Error or Info Message */}
