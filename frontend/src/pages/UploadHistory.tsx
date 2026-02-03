@@ -139,6 +139,13 @@ const UploadHistory = () => {
     fetchUsers()
     fetchConversations()
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (userId) {
+      fetchConversations()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
   const getTypeLabel = (type: string) => {
